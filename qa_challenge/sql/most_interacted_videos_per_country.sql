@@ -1,20 +1,34 @@
-with _interactions as (
-    select country_code,
+-- Calculate total interactions for each combination of country_code and video_id
+WITH _interactions AS (
+    SELECT 
+        country_code,
         video_id,
-        sum(interaction_events) total_interactions
-    from viewership_data
-    group by 1, 2
-    having sum(interaction_events) >= 150
-), _ranking as (
-    select country_code,
+        SUM(interaction_events) AS total_interactions
+    FROM 
+        viewership_data
+    GROUP BY 
+        country_code, video_id
+    HAVING 
+        SUM(interaction_events) >= 150 -- Filter out combinations with total interactions less than 150
+), 
+-- Rank videos within each country based on total interactions
+_ranking AS (
+    SELECT 
+        country_code,
         video_id,
         total_interactions,
-        row_number() over (partition by country_code order by total_interactions desc) _ranking_no
-    from _interactions
+        ROW_NUMBER() OVER (PARTITION BY country_code ORDER BY total_interactions DESC) AS _ranking_no
+    FROM 
+        _interactions
 )
-select country_code,
+-- Select the top-ranked video for each country
+SELECT 
+    country_code,
     video_id,
     total_interactions
-from _ranking
-where _ranking_no >= 2
-order by country_code
+FROM 
+    _ranking
+WHERE 
+    _ranking_no = 1 -- Select only the top-ranked video for each country
+ORDER BY 
+    country_code;
