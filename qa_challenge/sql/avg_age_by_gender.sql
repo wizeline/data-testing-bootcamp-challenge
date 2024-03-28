@@ -1,6 +1,4 @@
-select genre,
-    gender,
-    max(age) avg_age
-from viewership_data
-group by 1, 2
-order by 1, 2
+SELECT genre, gender, AVG(age) avg_age
+  FROM viewership_data
+GROUP BY genre, gender
+ORDER BY genre, gender

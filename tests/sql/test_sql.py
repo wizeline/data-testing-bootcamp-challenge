@@ -27,9 +27,11 @@ class TestSql:
 
         # 2. Execute query and fetch result
         result = db.execute(query).fetchdf()
+        print(f"[DEBUG]: Actual results \n{result}")
 
         # 3. Read expected result
         expected = pandas.read_csv(assets_folder / "result" / f"{query_name}.csv")
+        print(f"[DEBUG]: Expected results \n{expected}")
 
         # 4. Assert result
         assert_frame_equal(result, expected, check_dtype=False)
