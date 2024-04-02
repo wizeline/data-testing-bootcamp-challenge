@@ -1,0 +1,123 @@
+==================================================================================================================== test session starts =====================================================================================================================
+platform darwin -- Python 3.10.14, pytest-8.1.1, pluggy-1.4.0
+rootdir: /Users/ernestosolis/coding/DATATESTING_BOOTCAMP/data-testing-bootcamp-challenge-master
+configfile: pyproject.toml
+collected 2 items                                                                                                                                                                                                                                            
+
+tests/sql/test_sql.py FF                                                                                                                                                                                                                               [100%]
+
+========================================================================================================================== FAILURES ==========================================================================================================================
+___________________________________________________________________________________________ TestSql.test_avg_user_consumption[most_interacted_videos_per_country] ____________________________________________________________________________________________
+
+self = <test_sql.TestSql object at 0x1237b6800>, query_name = 'most_interacted_videos_per_country', assets_folder = PosixPath('/Users/ernestosolis/coding/DATATESTING_BOOTCAMP/data-testing-bootcamp-challenge-master/tests/assets')
+db = <duckdb.duckdb.DuckDBPyConnection object at 0x1237d48b0>
+
+    @pytest.mark.parametrize(
+        "query_name", ["most_interacted_videos_per_country", "avg_age_by_gender"]
+    )
+    def test_avg_user_consumption(
+        self, query_name: str, assets_folder: Path, db: duckdb.DuckDBPyConnection
+    ):
+        # Path: tests/sql/test_query.py
+        # Compare this snippet from qa_challenge/constants.py:
+        # from pathlib import Path
+        #
+        # SQL_FOLDER = Path(__file__).parent / "sql"
+        # 1. Read sql file from folder
+        sql_file = SQL_FOLDER / f"{query_name}.sql"
+        with open(sql_file, "r", encoding="utf-8") as f:
+            query = f.read()
+    
+        # 2. Execute query and fetch result
+        result = db.execute(query).fetchdf()
+    
+        # 3. Read expected result
+        expected = pandas.read_csv(assets_folder / "result" / f"{query_name}.csv")
+    
+        # 4. Assert result
+>       assert_frame_equal(result, expected, check_dtype=False)
+E       AssertionError: DataFrame are different
+E       
+E       DataFrame shape mismatch
+E       [left]:  (24, 3)
+E       [right]: (81, 3)
+
+tests/sql/test_sql.py:35: AssertionError
+____________________________________________________________________________________________________ TestSql.test_avg_user_consumption[avg_age_by_gender] ____________________________________________________________________________________________________
+
+self = <test_sql.TestSql object at 0x1237b6830>, query_name = 'avg_age_by_gender', assets_folder = PosixPath('/Users/ernestosolis/coding/DATATESTING_BOOTCAMP/data-testing-bootcamp-challenge-master/tests/assets')
+db = <duckdb.duckdb.DuckDBPyConnection object at 0x1237d48b0>
+
+    @pytest.mark.parametrize(
+        "query_name", ["most_interacted_videos_per_country", "avg_age_by_gender"]
+    )
+    def test_avg_user_consumption(
+        self, query_name: str, assets_folder: Path, db: duckdb.DuckDBPyConnection
+    ):
+        # Path: tests/sql/test_query.py
+        # Compare this snippet from qa_challenge/constants.py:
+        # from pathlib import Path
+        #
+        # SQL_FOLDER = Path(__file__).parent / "sql"
+        # 1. Read sql file from folder
+        sql_file = SQL_FOLDER / f"{query_name}.sql"
+        with open(sql_file, "r", encoding="utf-8") as f:
+            query = f.read()
+    
+        # 2. Execute query and fetch result
+        result = db.execute(query).fetchdf()
+    
+        # 3. Read expected result
+        expected = pandas.read_csv(assets_folder / "result" / f"{query_name}.csv")
+    
+        # 4. Assert result
+>       assert_frame_equal(result, expected, check_dtype=False)
+
+tests/sql/test_sql.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+left = array([70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70]), right = array([38.72885033, 40.78924731, 41.71822034, 38.89125296, 39.78076063,
+       38.83438155, 40.22857143, 39.80510441, 39.36160714, 39.93918919,
+       38.72222222, 38.5       ])
+err_msg = None
+
+    def _raise(left, right, err_msg) -> NoReturn:
+        if err_msg is None:
+            if left.shape != right.shape:
+                raise_assert_detail(
+                    obj, f"{obj} shapes are different", left.shape, right.shape
+                )
+    
+            diff = 0
+            for left_arr, right_arr in zip(left, right):
+                # count up differences
+                if not array_equivalent(left_arr, right_arr, strict_nan=strict_nan):
+                    diff += 1
+    
+            diff = diff * 100.0 / left.size
+            msg = f"{obj} values are different ({np.round(diff, 5)} %)"
+>           raise_assert_detail(obj, msg, left, right, index_values=index_values)
+E           AssertionError: DataFrame.iloc[:, 2] (column name="avg_age") are different
+E           
+E           DataFrame.iloc[:, 2] (column name="avg_age") values are different (100.0 %)
+E           [index]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+E           [left]:  [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70]
+E           [right]: [38.72885032537961, 40.78924731182796, 41.71822033898305, 38.89125295508274, 39.78076062639821, 38.83438155136268, 40.22857142857143, 39.80510440835267, 39.361607142857146, 39.93918918918919, 38.72222222222222, 38.5]
+
+virtenv/lib/python3.10/site-packages/pandas/_testing/asserters.py:684: AssertionError
+================================================================================================================== short test summary info ===================================================================================================================
+FAILED tests/sql/test_sql.py::TestSql::test_avg_user_consumption[most_interacted_videos_per_country] - AssertionError: DataFrame are different
+FAILED tests/sql/test_sql.py::TestSql::test_avg_user_consumption[avg_age_by_gender] - AssertionError: DataFrame.iloc[:, 2] (column name="avg_age") are different
+===================================================================================================================== 2 failed in 0.26s =================================
+
+
+
+AssertionError: DataFrame are different
+
+AssertionError: DataFrame.iloc[:, 2] (column name="avg_age") are different
+
+
+
+
+
+
